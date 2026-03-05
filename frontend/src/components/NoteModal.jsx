@@ -25,13 +25,13 @@ const NoteModal = ({ isOpen, onClose, note, onSave }) => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       if (note) {
         const { data } = await axios.put(
-          `/api/notes/${note._id}`,
+          `http://localhost:3000/api/notes/${note._id}`,
           payload,
           config
         );
         onSave(data);
       } else {
-        const { data } = await axios.post("/api/notes", payload, config);
+        const { data } = await axios.post("http://localhost:3000/api/notes", payload, config);
         onSave(data);
       }
       setTitle("");
@@ -40,10 +40,12 @@ const NoteModal = ({ isOpen, onClose, note, onSave }) => {
       onClose();
     } catch (err) {
       console.log("Note save error");
-      setError("Failed to save error");
+      setError("Failed to save error", err);
     }
   };
+
   if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
       <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md">
