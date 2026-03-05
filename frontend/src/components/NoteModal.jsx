@@ -39,7 +39,7 @@ const NoteModal = ({ isOpen, onClose, note, onSave }) => {
       setError("");
       onClose();
     } catch (err) {
-      console.log("Note save error");
+      console.log("Note save error", err);
       setError("Failed to save error", err);
     }
   };

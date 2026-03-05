@@ -63,10 +63,23 @@ router.get("/me", protect, async (req, res) => {
   res.status(200).json(req.user);
 });
 
+
+// get all user
+router.get("/",  async (req, res) => {
+  try {
+    const users = await User.find({}, "name email");
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+})
+
 // Generate JWT
 const generateToken = (id) => {
   console.log("Generating token for user ID:", id); 
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
+
 
 export default router;

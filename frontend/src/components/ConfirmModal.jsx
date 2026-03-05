@@ -4,8 +4,8 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, message }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none bg-blue">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-80 text-center border border-gray-300 pointer-events-auto">
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-blue/40">
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-80 text-center border border-gray-300">
         <p className="mb-4 text-white font-bold">{message || "Are you sure?"}</p>
         <div className="flex justify-center gap-4">
           <button

@@ -159,12 +159,12 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editNote, setEditNote] = useState(null);
 
-  const [noteToDelete, setNoteToDelete] = useState(null); // State to store note to delete
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // State to control delete modal
+  const [noteToDelete, setNoteToDelete] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const location = useLocation();
 
-  // Fetch notes from backend
+
   const fetchNotes = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -176,6 +176,8 @@ const Home = () => {
       const { data } = await axios.get("http://localhost:3000/api/notes", {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      console.log("Fetched notes:", data);
 
       const notesArray = Array.isArray(data) ? data : data.notes || [];
       setNotes(notesArray);
@@ -198,7 +200,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchNotes();
-  }, []);
+  }, []); // Refetch notes after deletion
 
   // Edit note
   const handleEdit = (note) => {
@@ -226,20 +228,28 @@ const Home = () => {
   // Confirm delete
   const confirmDelete = async () => {
     try {
+      console.log("Deleting:", noteToDelete);
+
       const token = localStorage.getItem("token");
-      if (!token) {
-        setError("No authentication token found. Please log in");
-        return;
-      }
-      await axios.delete(`http://localhost:3000/api/notes/${noteToDelete._id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+
+      const res = await axios.delete(
+        `http://localhost:3000/api/notes/${noteToDelete._id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      console.log(res.data);
+
       setNotes(notes.filter((n) => n._id !== noteToDelete._id));
       setNoteToDelete(null);
       setIsDeleteModalOpen(false);
+
+
+
     } catch (err) {
-      setError("Failed to delete note");
-      setIsDeleteModalOpen(false);
+      console.error(err.response?.data || err.message);
+      console.log("Note deleted successfully");
     }
   };
 
@@ -291,13 +301,24 @@ const Home = () => {
               <div className="flex justify-end space-x-2 mt-4">
                 <button
                   onClick={() => handleEdit(note)}
-                  className="bg-yellow-600 text-white px-3 py-1 rounded-md hover:bg-yellow-700"
+                  disabled={note.access === "read"}
+                  className={`px-3 py-1 rounded-md text-white 
+  ${note.access === "read"
+                      ? "bg-gray-500 cursor-not-allowed"
+                      : "bg-yellow-600 hover:bg-yellow-700"
+                    }`}
                 >
                   <FaRegEdit />
                 </button>
+
                 <button
                   onClick={() => handleDeleteClick(note)}
-                  className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700"
+                  disabled={note.access === "read"}
+                  className={`px-3 py-1 rounded-md text-white
+  ${note.access === "read"
+                      ? "bg-gray-500 cursor-not-allowed"
+                      : "bg-red-600 hover:bg-red-700"
+                    }`}
                 >
                   <MdDelete />
                 </button>
